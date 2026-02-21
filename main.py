@@ -113,7 +113,8 @@ class MusicAPI:
         try:
             async with aiohttp.ClientSession(timeout=self.timeout) as session:
                 async with session.get(url, params=params, headers=headers) as resp:
-                    data = await resp.json()
+                    text = await resp.text()
+                    data = json.loads(text)
                     
             if data.get("code") != 0:
                 return []
@@ -229,7 +230,8 @@ class MusicAPI:
             
             async with aiohttp.ClientSession(timeout=self.timeout) as session:
                 async with session.get(url, params=params, headers=headers) as resp:
-                    result = await resp.json()
+                    text = await resp.text()
+                    result = json.loads(text)
             
             req_0 = result.get("req_0", {})
             if req_0.get("code") == 0:
@@ -258,7 +260,8 @@ class MusicAPI:
             
             async with aiohttp.ClientSession(timeout=self.timeout) as session:
                 async with session.get(url, params=params, headers=headers) as resp:
-                    result = await resp.json()
+                    text = await resp.text()
+                    result = json.loads(text)
             
             if result.get("code") == 200:
                 data = result.get("data", [])
@@ -271,7 +274,7 @@ class MusicAPI:
             return f"https://music.163.com/song?id={song_id}"
 
 
-@register("listen_together", "Binbim", "QQ一起听音乐插件 - 创建音乐房间，邀请好友一起听歌", "1.0.0")
+@register("listen_together", "Binbim", "QQ一起听音乐插件 - 创建音乐房间，邀请好友一起听歌", "1.1.0")
 class ListenTogetherPlugin(Star):
     def __init__(self, context: Context):
         super().__init__(context)
@@ -409,7 +412,7 @@ class ListenTogetherPlugin(Star):
         user_id = str(event.get_sender_id())
         message = event.message_str.strip()
         
-        keyword = message.replace("/点歌", "").strip()
+        keyword = re.sub(r'^[/,，.\s]*点歌\s*', '', message).strip()
         if not keyword:
             yield event.plain_result("请输入歌曲名称，例如: /点歌 稻香")
             return
@@ -455,8 +458,13 @@ class ListenTogetherPlugin(Star):
             yield event.plain_result("❌ 请先使用 /点歌 搜索歌曲")
             return
         
+        match = re.search(r'(\d+)', message)
+        if not match:
+            yield event.plain_result("❌ 请输入正确的序号，例如: /选歌 1")
+            return
+        
         try:
-            index = int(message.replace("/选歌", "").strip()) - 1
+            index = int(match.group(1)) - 1
         except ValueError:
             yield event.plain_result("❌ 请输入正确的序号，例如: /选歌 1")
             return
@@ -605,8 +613,13 @@ class ListenTogetherPlugin(Star):
             yield event.plain_result("❌ 你不在音乐房间里")
             return
         
+        match = re.search(r'(\d+)', message)
+        if not match:
+            yield event.plain_result("❌ 请输入正确的序号，例如: /切歌 3")
+            return
+        
         try:
-            index = int(message.replace("/切歌", "").strip()) - 1
+            index = int(match.group(1)) - 1
         except ValueError:
             yield event.plain_result("❌ 请输入正确的序号，例如: /切歌 3")
             return
@@ -637,8 +650,13 @@ class ListenTogetherPlugin(Star):
             yield event.plain_result("❌ 你不在音乐房间里")
             return
         
+        match = re.search(r'(\d+)', message)
+        if not match:
+            yield event.plain_result("❌ 请输入正确的序号，例如: /移除 2")
+            return
+        
         try:
-            index = int(message.replace("/移除", "").strip()) - 1
+            index = int(match.group(1)) - 1
         except ValueError:
             yield event.plain_result("❌ 请输入正确的序号，例如: /移除 2")
             return
@@ -681,7 +699,7 @@ class ListenTogetherPlugin(Star):
             yield event.plain_result("❌ 你不在音乐房间里")
             return
         
-        mode = message.replace("/播放模式", "").strip()
+        mode = re.sub(r'^[/,，.\s]*播放模式\s*', '', message).strip()
         if mode in ["顺序", "sequence"]:
             room.play_mode = "sequence"
             yield event.plain_result("🔀 播放模式: 顺序播放")

@@ -44,7 +44,7 @@
 
 ```bash
 cd AstrBot/addons/plugins
-git clone https://github.com/Binbim/astrbot_plugin_ListentogetheronQQ.git
+git clone https://github.com/BB0813/astrbot_plugin_ListentogetheronQQ.git
 ```
 
 ## 使用方法
@@ -123,6 +123,21 @@ git clone https://github.com/Binbim/astrbot_plugin_ListentogetheronQQ.git
 点歌搜索 → 选择歌曲 → 获取链接 → 分享给好友
 ```
 
+## 功能说明
+
+> ⚠️ **重要提示**
+> 
+> 本插件实现的是**音乐分享功能**，而非QQ官方的"一起听"功能。
+> 
+> - ✅ 搜索QQ音乐/网易云音乐
+> - ✅ 获取歌曲播放链接
+> - ✅ 分享给群成员
+> - ❌ 无法实现同步播放
+> - ❌ 无法监测播放状态
+> - ❌ 无法调用QQ官方一起听功能
+> 
+> 这是由于QQ官方/NapCat/OneBot协议均未开放相关API接口。
+
 ## 常见问题
 
 ### Q: 为什么有些歌曲无法播放？
@@ -168,6 +183,13 @@ A: 优先搜索QQ音乐，如果QQ音乐无结果或失败，会自动切换到�
 - AstrBot >= v3.4.0
 
 ## 更新日志
+
+### v1.1.0 (2025-02-22)
+
+- 🐛 修复QQ音乐/网易云音乐API返回类型解析问题
+- 🐛 修复命令参数解析问题（支持多种命令前缀）
+- 🔧 优化正则表达式匹配逻辑
+- 📝 完善文档和注释
 
 ### v1.0.0 (2025-02-22)
 
